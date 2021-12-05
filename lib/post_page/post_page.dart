@@ -81,12 +81,16 @@ class PostAddForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var _postContentController = TextEditingController();
+
     return Form(
       key: _formKey,
       child: TextFormField(
+        controller: _postContentController,
         decoration: InputDecoration(
             suffixIcon: IconButton(
-          onPressed: () => {},
+          onPressed: () => BlocProvider.of<PostPageBloc>(context)
+              .add(PostPageAddPost("Me", _postContentController.text)),
           icon: const Icon(Icons.send),
           color: Theme.of(context).primaryColor,
         )),
