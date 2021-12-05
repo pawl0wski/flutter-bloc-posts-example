@@ -36,17 +36,23 @@ class PostPageView extends StatelessWidget {
               ));
             });
 
-            return ListView(
-              children: listOfPosts,
-            );
+            var _formKey = GlobalKey<FormState>();
+
+            return Column(children: [
+              PostAddForm(formKey: _formKey),
+              Expanded(
+                  child: ListView(
+                children: listOfPosts,
+              )),
+            ]);
           },
         ),
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             FloatingActionButton(
-              onPressed: () =>
-                  BlocProvider.of<PostPageBloc>(context).add(PostPageAddPost()),
+              onPressed: () => BlocProvider.of<PostPageBloc>(context)
+                  .add(PostPageAddPost("John", "Hello")),
               tooltip: 'Add post',
               child: const Icon(Icons.add),
             ),
@@ -61,5 +67,30 @@ class PostPageView extends StatelessWidget {
             ),
           ],
         ));
+  }
+}
+
+class PostAddForm extends StatelessWidget {
+  const PostAddForm({
+    Key? key,
+    required GlobalKey<FormState> formKey,
+  })  : _formKey = formKey,
+        super(key: key);
+
+  final GlobalKey<FormState> _formKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: TextFormField(
+        decoration: InputDecoration(
+            suffixIcon: IconButton(
+          onPressed: () => {},
+          icon: const Icon(Icons.send),
+          color: Theme.of(context).primaryColor,
+        )),
+      ),
+    );
   }
 }
