@@ -14,8 +14,10 @@ class PostPageBloc extends Bloc<PostEvent, List<Map<String, String>>> {
     });
 
     on<PostPageDeletePost>((event, emit) {
-      state.remove(state.last);
-      emit(state.toList());
+      if (state.isNotEmpty) {
+        state.remove(state.last);
+        emit(state.toList());
+      }
     });
   }
 }
