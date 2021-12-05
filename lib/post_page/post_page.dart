@@ -23,28 +23,43 @@ class PostPageView extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Posts"),
         ),
-        body: BlocBuilder<PostPageBloc, List<Map<String, String>>>(
-          builder: (BuildContext context, List<Map<String, String>> posts) {
-            List<Widget> listOfPosts = [];
-
-            posts.forEach((post) {
-              listOfPosts.add(Card(
-                child: ListTile(
-                  title: Text(post["author"]!),
-                  subtitle: Text(post["content"]!),
-                ),
+        body: BlocConsumer<PostPageBloc, PostPageState>(
+          buildWhen: (previous, current) {
+            return current is! PostPageError;
+          },
+          listener: (BuildContext context, PostPageState state) {
+            if (state is PostPageError) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(state.message),
               ));
-            });
+            }
+          },
+          builder: (BuildContext context, PostPageState state) {
+            List<Widget> listOfPosts = [];
+            if (state is PostPageData) {
+              state.posts.forEach((post) {
+                listOfPosts.add(Card(
+                  child: ListTile(
+                    title: Text(post["author"]!),
+                    subtitle: Text(post["content"]!),
+                  ),
+                ));
+              });
 
-            var _formKey = GlobalKey<FormState>();
+              var _formKey = GlobalKey<FormState>();
 
-            return Column(children: [
-              PostAddForm(formKey: _formKey),
-              Expanded(
-                  child: ListView(
-                children: listOfPosts,
-              )),
-            ]);
+              return Column(children: [
+                PostAddForm(formKey: _formKey),
+                Expanded(
+                    child: ListView(
+                  children: listOfPosts,
+                )),
+              ]);
+            } else {
+              return const Center(
+                child: Text("No data"),
+              );
+            }
           },
         ),
         floatingActionButton: Row(

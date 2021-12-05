@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// Events
+
 abstract class PostEvent {}
 
 class PostPageAddPost extends PostEvent {
@@ -11,17 +13,38 @@ class PostPageAddPost extends PostEvent {
 
 class PostPageDeletePost extends PostEvent {}
 
-class PostPageBloc extends Bloc<PostEvent, List<Map<String, String>>> {
-  PostPageBloc() : super([]) {
+// States
+abstract class PostPageState {}
+
+class PostPageData extends PostPageState {
+  List<Map<String, String>> posts = [];
+  PostPageData(this.posts);
+}
+
+class PostPageError extends PostPageState {
+  String message;
+  PostPageError(this.message);
+}
+
+// Bloc
+
+class PostPageBloc extends Bloc<PostEvent, PostPageState> {
+  List<Map<String, String>> posts = [];
+
+  PostPageBloc() : super(PostPageData([])) {
     on<PostPageAddPost>((PostPageAddPost event, emit) {
-      state.add({"author": event.author, "content": event.content});
-      emit(state.toList());
+      if (event.content.isEmpty) {
+        emit(PostPageError("You need to provide post content."));
+      } else {
+        posts.add({"author": event.author, "content": event.content});
+        emit(PostPageData(posts));
+      }
     });
 
     on<PostPageDeletePost>((event, emit) {
-      if (state.isNotEmpty) {
-        state.remove(state.last);
-        emit(state.toList());
+      if (posts.isNotEmpty) {
+        posts.remove(posts.last);
+        emit(PostPageData(posts));
       }
     });
   }
