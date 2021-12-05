@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
 
 // Events
 
@@ -14,16 +15,22 @@ class PostPageAddPost extends PostEvent {
 class PostPageDeletePost extends PostEvent {}
 
 // States
-abstract class PostPageState {}
+abstract class PostPageState extends Equatable {}
 
 class PostPageData extends PostPageState {
   List<Map<String, String>> posts = [];
   PostPageData(this.posts);
+
+  @override
+  List<Object?> get props => [posts];
 }
 
 class PostPageError extends PostPageState {
   String message;
   PostPageError(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }
 
 // Bloc
